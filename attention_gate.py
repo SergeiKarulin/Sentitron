@@ -1,7 +1,9 @@
 import time
 import random
+attention = 0.0
 
-def attention_switch(sentitron_input = "-", external_input, attention=0.0):
+def attention_switch(external_input, sentitron_input = "dreaming..."):
+    global attention
     if external_input:
         attention = min(attention + 0.1, 1.0)
     else:
@@ -13,14 +15,13 @@ def attention_switch(sentitron_input = "-", external_input, attention=0.0):
         return sentitron_input
 
 # Tact generator
-def run_attention_switch(sentitron_input, quote):
-    attention = 0.0
+def run_attention_switch(quote):
     quote_position = 0
 
     while True:
-        external_input = quote[quote_position] if random.random() > 0.3 else ""  # Randomly miss some tacts
-        output, attention = attention_switch(sentitron_input, external_input, attention)
-        print(f"Output: {output}, Attention: {attention}")
+        external_input = quote[quote_position] if random.random() > 0.2 else ""  # Randomly miss some tacts
+        output = attention_switch(external_input)
+        print(f"Input: {external_input}, Attention: {round(attention, 1)}, Output: {output}")
         time.sleep(0.25)  # Wait for 0.25 seconds
 
         if external_input:
@@ -30,4 +31,4 @@ def run_attention_switch(sentitron_input, quote):
 
 # Example usage
 quote = "The cosmos is within us. We are made of star-stuff. We are a way for the universe to know itself"
-run_attention_switch("Internal signal", quote)
+run_attention_switch(quote)
