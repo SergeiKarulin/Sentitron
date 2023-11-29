@@ -29,6 +29,6 @@ def run_attention_switch(quote):
             if quote_position >= len(quote):
                 break
 
-# Example usage
+# Example usage: giving a phrace with pauses in speech
 quote = "The cosmos is within us. We are made of star-stuff. We are a way for the universe to know itself"
 run_attention_switch(quote)
