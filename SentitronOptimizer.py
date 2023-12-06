@@ -19,31 +19,33 @@ class SentitronGradientDescentMetaParameterOptimizer:
 
     def objective_function(self):
         total_firing_cycles = 0
+        self.simulator.touch([[1,1]])
         for _ in range(self.cyclesToRun):
             tick = self.simulator.Tick()
-            if 0 < tick < self.simulator.sizeOfCortexLayer ** 2:
+            if (0 < tick < self.simulator.sizeOfCortexLayer ** 2):
                 total_firing_cycles += 1
             else:
                 break
         return abs(total_firing_cycles - self.target)
 
-    def compute_gradients(self):
+    def compute_gradients(self, epsilon = 1e-4):
         gradients = {}
         original_loss = self.objective_function()
-
         for param in self.dynamicParams:
             original_value = self.dynamicParams[param]
-            self.simulator.reInit(**{param: original_value + 1e-4})
+            self.dynamicParams[param] = original_value + epsilon
+            self.simulator.reInit(**self.dynamicParams)
             new_loss = self.objective_function()
-            gradient = (new_loss - original_loss) / 1e-4
+            gradient = (new_loss - original_loss) / epsilon
             gradients[param] = gradient
-            self.simulator.reInit(**{param: original_value})
+            self.dynamicParams[param] = original_value
+            self.simulator.reInit(**self.dynamicParams)
 
         return gradients
 
-    def optimize(self):
+    def optimize(self, epsilon = 1e-4):
         for i in range(self.iterations):
-            gradients = self.compute_gradients()
+            gradients = self.compute_gradients(epsilon)
 
             for param in self.dynamicParams:
                 self.dynamicParams[param] -= self.learning_rate * gradients[param]
@@ -55,17 +57,17 @@ class SentitronGradientDescentMetaParameterOptimizer:
         return self.dynamicParams
 
 #Some Example To Try
-initial_params = {
-    "sizeOfCortexLayer": 210,
-    "neuronSynapseFormingAreaSize": 25,
-    "mediatorDecaySpeed": 0.05,
-    "potentialDecaySpeed": 0.1,
-    "activationPotential": 5,
-    "synapseStrengthRange": 4,
-    "mediatorDoseFromFire": 0.1,
-    "mediatorDoseFromTouch": 100
-}
-
+#initial_params = {
+#    "sizeOfCortexLayer": 210,
+#    "neuronSynapseFormingAreaSize": 25,
+#    "mediatorDecaySpeed": 0.05,
+#    "potentialDecaySpeed": 0.1,
+#    "activationPotential": 5,
+#    "synapseStrengthRange": 4,
+#    "mediatorDoseFromFire": 0.1,
+#    "mediatorDoseFromTouch": 100
+#}
+#
 ###Usage Example
 #optimizer = SentitronGradientDescentMetaParameterOptimizer(
 #    initial_params=initial_params,

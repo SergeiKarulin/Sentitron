@@ -5,7 +5,7 @@ class Sentitron:
                  mediatorDecaySpeed=0.25, potentialDecaySpeed=0.1, activationPotential=3, 
                  synapseStrengthRange=1, mediatorDoseFromFire=2, mediatorDoseFromTouch=10):
         
-        self.sizeOfCortexLayer = sizeOfCortexLayer #6Gb GPU ~ 150, 16Gb GPU ~ 210-215
+        self.sizeOfCortexLayer = sizeOfCortexLayer #6Gb GPU ~ 150, 16Gb GPU ~ 210-215 to Run, or 200 to optimize
         self.mediatorDoseFromFire = mediatorDoseFromFire #The amount of mediator passed to the synapse on neuron activation
         self.mediatorDoseFromTouch = mediatorDoseFromTouch #The amount of mediator we pass to the synapse when touch it
         self.mediatorDecaySpeed = mediatorDecaySpeed #The speed of difusion in synapses
@@ -66,4 +66,4 @@ class Sentitron:
         self.synapse_mediator_amount *= (1 - self.mediatorDecaySpeed)
         self.synapse_mediator_amount[self.synapse_mediator_amount < 0] = 0 # We don't need negative mediator amount
         self.cortex *= (1 - self.potentialDecaySpeed)
-        return((self.cortex >= self.activationPotential * (1 - self.potentialDecaySpeed)).count_nonzero())
+        return((self.cortex >= self.activationPotential).count_nonzero())
