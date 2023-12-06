@@ -1,10 +1,31 @@
 import torch
 
 class Sentitron:
-    def __init__(self, size_of_cortex_layer=100, neuron_synapse_forming_area_size=7, 
-                 mediatorDoseFromFire=2, mediatorDoseFromTouch=10, mediatorDecaySpeed=0.25, 
-                 potentialDecaySpeed=0.1, activationPotential=3, synapseStrengthRange=1):
-        # Parameters
+    def __init__(self, sizeOfCortexLayer=100, neuronSynapseFormingAreaSize=7, 
+                 mediatorDecaySpeed=0.25, potentialDecaySpeed=0.1, activationPotential=3, 
+                 synapseStrengthRange=1, mediatorDoseFromFire=2, mediatorDoseFromTouch=10):
+        
+        self.sizeOfCortexLayer = sizeOfCortexLayer #6Gb GPU ~ 150, 16Gb GPU ~ 210-215
+        self.mediatorDoseFromFire = mediatorDoseFromFire #The amount of mediator passed to the synapse on neuron activation
+        self.mediatorDoseFromTouch = mediatorDoseFromTouch #The amount of mediator we pass to the synapse when touch it
+        self.mediatorDecaySpeed = mediatorDecaySpeed #The speed of difusion in synapses
+        self.potentialDecaySpeed = potentialDecaySpeed #The speed how neuron loses tension
+        self.activationPotential = activationPotential
+        self.synapseStrengthRange = synapseStrengthRange #Possible synapse weights: 2 = [-1;1], 5 = [-2.5;2.5]
+        self.neuronSynapseFormingAreaSize = neuronSynapseFormingAreaSize #The size of an area whnere neuron creates axonal connections (5 = 5x5), better to keep it even
+
+        
+        # Device setup
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print("Using CUDA!" if torch.cuda.is_available() else "CUDA not available. Using CPU.")
+
+        self.cortex = torch.zeros(self.sizeOfCortexLayer, self.sizeOfCortexLayer, dtype=torch.float16).to(self.device)
+        self.synapses = self.initialize_synapses()
+        self.synapse_mediator_amount = torch.zeros_like(self.synapses, dtype=torch.float16).to(self.device)
+
+    def reInit(self, neuron_synapse_forming_area_size, mediatorDecaySpeed, potentialDecaySpeed, 
+                 activationPotential, synapseStrengthRange, mediatorDoseFromFire, mediatorDoseFromTouch):
+        #Changes meta parameters keeping the size unchanged
         self.mediatorDoseFromFire = mediatorDoseFromFire
         self.mediatorDoseFromTouch = mediatorDoseFromTouch
         self.mediatorDecaySpeed = mediatorDecaySpeed
@@ -12,17 +33,11 @@ class Sentitron:
         self.activationPotential = activationPotential
         self.synapseStrengthRange = synapseStrengthRange
         self.neuronSynapseFormingAreaSize = neuron_synapse_forming_area_size
-        self.sizeOfCortexLayer = size_of_cortex_layer
-        
-        # Device setup
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print("Using CUDA!" if torch.cuda.is_available() else "CUDA not available. Using CPU.")
 
-        # Initializing tensors
-        self.cortex = torch.zeros(self.sizeOfCortexLayer, self.sizeOfCortexLayer, dtype=torch.float16).to(self.device)
+        self.cortex.zero_()
         self.synapses = self.initialize_synapses()
-        self.synapse_mediator_amount = torch.zeros_like(self.synapses, dtype=torch.float16).to(self.device)
-
+        self.synapse_mediator_amount.zero_()
+    
     def initialize_synapses(self):
         synapses = torch.rand(self.sizeOfCortexLayer, self.sizeOfCortexLayer, 
                               self.sizeOfCortexLayer, self.sizeOfCortexLayer, dtype=torch.float16).to(self.device)
@@ -49,8 +64,7 @@ class Sentitron:
         self.cortex[mask] -= self.activationPotential
         self.cortex += (self.synapse_mediator_amount * self.synapses).sum(dim=0).sum(dim=0)
         self.cortex[self.cortex < 0] = 0  # We don't need negative potential
-        a = 1 - self.mediatorDecaySpeed
         self.synapse_mediator_amount *= (1 - self.mediatorDecaySpeed)
-        self.synapse_mediator_amount[self.synapse_mediator_amount < 0] = 0
+        self.synapse_mediator_amount[self.synapse_mediator_amount < 0] = 0 # We don't need negative mediator amount
         self.cortex *= (1 - self.potentialDecaySpeed)
         return((self.cortex >= self.activationPotential * (1 - self.potentialDecaySpeed)).count_nonzero())
