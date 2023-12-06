@@ -1,19 +1,38 @@
-# Sentitron
+# Sentitron Research Repository
 
-Welcome to the Sentitron repository, an illustration of the concept for artificial neural network model designed to emulate aspects of continuous consciousness in a digital environment. Sentitron stands apart from traditional neural networks by its unique operation and learning mechanisms.
+## Introduction
+Welcome to the Sentitron Research Repository. This project represents a significant stride in the exploration of artificial neural network technologies. Our focus lies in developing and testing alternative approaches to neural network design and learning mechanisms, with an aim to address the limitations of current back-propagation methods, especially in terms of GPU resource and time efficiency.
 
-Key Features:
-Time-Driven Dynamics: Sentitron operates continuously, driven by an internal heartbeat mechanism, ensuring constant signal processing.
-Autonomous Neuronal Activity: Neurons in Sentitron discharge at regular intervals, with input signals only modulating the rate of discharge.
-Memory Formation: Short-term memory emerges from random stimulation loops, while long-term memory develops from loops that persist over time.
-Feedback Loop: The network's output is fed back into its input, facilitating complex internal dynamics.
-Synaptic Uniqueness: Each synapse deactivates at its own rate, adding to the network's dynamic variability.
-Adaptive Attention: Sentitron can shift its focus between external inputs and internal signals, emulating a form of digital attention.
-Neuronal Fatigue: To prevent overstimulation, neurons experience fatigue, raising their activation thresholds temporarily.
-Learning Process:
-Sentitron's learning does not rely on back-propagation. Instead, it learns through interactions with both external stimuli and its own internal signal generation, offering a fresh perspective on AI learning mechanisms.
+## Research Objectives
+Our objectives revolve around several key areas of innovation in neural network technology:
 
-Applications:
-This model is tailored to help researchers and enthusiasts interested in exploring new forms of artificial intelligence, particularly those that step away from traditional, input-output driven neural networks. Whether it's for academic research, AI experimentation, or just for the curious, Sentitron offers a unique platform to delve into the world of continuous, time-driven neural networks."
+### Time-Driven Dynamics
+- **Continuous Operation**: Unlike traditional neural networks, Sentitron is based on continuous, time-driven activity, orchestrated by an internal heartbeat mechanism.
 
-This structure provides a clear overview of the Sentitron concept, highlighting its unique features and potential applications.
+### Autonomous Neuronal Activity
+- **Independent Neuronal Discharge**: Exploring the behavior of neurons that autonomously discharge at regular intervals, differing from the stimulus-response mechanism in conventional models.
+
+### Innovative Memory Formation
+- **Memory Mechanisms**: Investigating new methods for memory formation in neural networks, focusing on how different stimulation patterns can lead to short-term and long-term memory development.
+
+### Feedback Loop Dynamics
+- **Internal Feedback Loops**: Utilizing the network's output as its own input to study the effects and potential of internal feedback mechanisms in AI systems.
+
+### Synaptic Variability and Neuronal Fatigue
+- **Dynamic Network Behavior**: Examining the influence of varying synaptic deactivation rates and the concept of neuronal fatigue on the overall behavior of neural networks.
+
+### Learning Process Without Back-Propagation
+- **Alternative Learning Methods**: Developing learning processes that move away from traditional back-propagation, potentially leading to more efficient neural network training.
+
+## Applications
+Sentitron is a valuable platform for researchers, AI enthusiasts, and anyone interested in alternative approaches to AI. It serves as a testbed for new ideas in neural network architectures and learning methods, contributing to more efficient and effective AI solutions.
+
+## Contribution
+We encourage collaboration and contributions from the AI community. Whether you're a researcher, a student, or just an AI enthusiast, your insights and experiments can help shape the future of neural network technologies.
+
+## License
+Apache License Version 2.0
+
+
+---
+*This README is designed to provide an overview of the Sentitron Research Repository's aims and areas of research.*
