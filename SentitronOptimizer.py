@@ -11,7 +11,7 @@ class SentitronGradientDescentMetaParameterOptimizer:
         initial_params.pop("neuronSynapseFormingAreaSize", None)
 
         self.simulator = Sentitron(**self.static_params, **initial_params)
-        self.params = initial_params
+        self.dynamicParams = initial_params
         self.learning_rate = learning_rate
         self.iterations = iterations
         self.cyclesToRun = cyclesToRun
@@ -31,13 +31,13 @@ class SentitronGradientDescentMetaParameterOptimizer:
         gradients = {}
         original_loss = self.objective_function()
 
-        for param in self.params:
-            original_value = self.params[param]
-            self.simulator.reInit(**self.static_params, **{param: original_value + 1e-4})
+        for param in self.dynamicParams:
+            original_value = self.dynamicParams[param]
+            self.simulator.reInit(**{param: original_value + 1e-4})
             new_loss = self.objective_function()
             gradient = (new_loss - original_loss) / 1e-4
             gradients[param] = gradient
-            self.simulator.reInit(**self.static_params, **{param: original_value})
+            self.simulator.reInit(**{param: original_value})
 
         return gradients
 
@@ -45,14 +45,14 @@ class SentitronGradientDescentMetaParameterOptimizer:
         for i in range(self.iterations):
             gradients = self.compute_gradients()
 
-            for param in self.params:
-                self.params[param] -= self.learning_rate * gradients[param]
+            for param in self.dynamicParams:
+                self.dynamicParams[param] -= self.learning_rate * gradients[param]
 
-            self.simulator.reInit(**self.static_params, **self.params)
+            self.simulator.reInit(**self.dynamicParams)
             loss = self.objective_function()
             print(f"Iteration {i}, Loss: {loss}")
 
-        return self.params
+        return self.dynamicParams
 
 #Some Example To Try
 initial_params = {
@@ -76,3 +76,5 @@ optimizer = SentitronGradientDescentMetaParameterOptimizer(
 
 # Perform optimization
 optimized_params = optimizer.optimize()
+print ("Done!")
+print (optimized_params)
