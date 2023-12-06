@@ -1,70 +1,60 @@
 import numpy as np
 from Sentitron import Sentitron
 
+class SentitronGradientDescentMetaParameterOptimizer:
+    def __init__(self, initial_params, learning_rate, iterations, cyclesToRun, target):
+        self.static_params = {
+            "sizeOfCortexLayer": initial_params["sizeOfCortexLayer"],
+            "neuronSynapseFormingAreaSize": initial_params["neuronSynapseFormingAreaSize"]
+        }
+        initial_params.pop("sizeOfCortexLayer", None)
+        initial_params.pop("neuronSynapseFormingAreaSize", None)
 
-def objective_function(simulator, target, cyclesToRun):
-    total_firing_cycles = 0
-    for _ in range(cyclesToRun):
-        tick = simulator.Tick()
-        if 0 < tick < simulator.sizeOfCortexLayer ** 2:
-            total_firing_cycles += 1
-        else:
-            break
-    return abs(total_firing_cycles - target)
+        self.simulator = Sentitron(**self.static_params, **initial_params)
+        self.params = initial_params
+        self.learning_rate = learning_rate
+        self.iterations = iterations
+        self.cyclesToRun = cyclesToRun
+        self.target = target
 
-def gradient_descent(simulator, params, learning_rate, iterations, cyclesToRun, target):
-    for i in range(iterations):
-        # Calculate gradients
-        # This part is highly dependent on how Sentitron class is implemented and whether it supports automatic differentiation.
-        # You may need a framework like PyTorch or TensorFlow if Sentitron is not currently set up for this.
-        gradients = compute_gradients(simulator, params)
+    def objective_function(self):
+        total_firing_cycles = 0
+        for _ in range(self.cyclesToRun):
+            tick = self.simulator.Tick()
+            if 0 < tick < self.simulator.sizeOfCortexLayer ** 2:
+                total_firing_cycles += 1
+            else:
+                break
+        return abs(total_firing_cycles - self.target)
 
-        # Update parameters
-        for param in params:
-            params[param] -= learning_rate * gradients[param]
+    def compute_gradients(self):
+        gradients = {}
+        original_loss = self.objective_function()
 
-        # Update the simulator with new parameters
-        simulator.reInit(**params)
+        for param in self.params:
+            original_value = self.params[param]
+            self.simulator.reInit(**self.static_params, **{param: original_value + 1e-4})
+            new_loss = self.objective_function()
+            gradient = (new_loss - original_loss) / 1e-4
+            gradients[param] = gradient
+            self.simulator.reInit(**self.static_params, **{param: original_value})
 
-        # Evaluate objective function
-        loss = objective_function(simulator, target, cyclesToRun)
-        print(f"Iteration {i}, Loss: {loss}")
+        return gradients
 
-        # Early stopping condition or other convergence criteria can be added here
-    return params
+    def optimize(self):
+        for i in range(self.iterations):
+            gradients = self.compute_gradients()
 
-def compute_gradients(simulator, params, objective_function, cyclesToRun, target, epsilon=1e-4):
-    """
-    :param simulator: Instance of Sentitron model.
-    :param params: Dictionary of current parameters.
-    :param objective_function: The objective function to minimize.
-    :param cyclesToRun: Number of cycles to run in the simulation.
-    :param target: Target value for the objective function.
-    :param epsilon: Small value for numerical derivative.
-    :return: Dictionary of gradients for each parameter.
-    """
-    gradients = {}
+            for param in self.params:
+                self.params[param] -= self.learning_rate * gradients[param]
 
-    # Original loss
-    original_loss = objective_function(simulator, target, cyclesToRun)
+            self.simulator.reInit(**self.static_params, **self.params)
+            loss = self.objective_function()
+            print(f"Iteration {i}, Loss: {loss}")
 
-    for param in params:
-        # Save the original value of the parameter
-        original_value = params[param]
-        # Perturb the parameter value
-        simulator.reInit(**{param: original_value + epsilon})      
-        # Compute new loss
-        new_loss = objective_function(simulator, target, cyclesToRun)
-        # Approximate gradient (numerical differentiation). Here we decide the sign of gradient to use for the nex iteration
-        gradient = (new_loss - original_loss) / epsilon
-        # Store the computed gradient
-        gradients[param] = gradient
-        # Reset the parameter to its original value
-        simulator.reInit(**{param: original_value})
+        return self.params
 
-    return gradients
-
-# Initial parameters
+#Some Example To Try
 initial_params = {
     "sizeOfCortexLayer": 210,
     "neuronSynapseFormingAreaSize": 25,
@@ -76,14 +66,13 @@ initial_params = {
     "mediatorDoseFromTouch": 100
 }
 
-# Initialize simulator
-model = Sentitron(**initial_params)
-
-# Optimization settings
-learning_rate = 0.1
-iterations = 10
-cyclesToRun = 100
-target = cyclesToRun*0.5
+optimizer = SentitronGradientDescentMetaParameterOptimizer(
+    initial_params=initial_params,
+    learning_rate=0.1,
+    iterations=10,
+    cyclesToRun=100,
+    target=100*0.5
+)
 
 # Perform optimization
-optimized_params = gradient_descent(model, initial_params.__delitem__("sizeOfCortexLayer"), learning_rate, iterations, cyclesToRun, target)
+optimized_params = optimizer.optimize()

@@ -23,16 +23,15 @@ class Sentitron:
         self.synapses = self.initialize_synapses()
         self.synapse_mediator_amount = torch.zeros_like(self.synapses, dtype=torch.float16).to(self.device)
 
-    def reInit(self, neuron_synapse_forming_area_size, mediatorDecaySpeed, potentialDecaySpeed, 
+    def reInit(self, mediatorDecaySpeed, potentialDecaySpeed, 
                  activationPotential, synapseStrengthRange, mediatorDoseFromFire, mediatorDoseFromTouch):
         #Changes meta parameters keeping the size unchanged
         self.mediatorDoseFromFire = mediatorDoseFromFire
         self.mediatorDoseFromTouch = mediatorDoseFromTouch
-        self.mediatorDecaySpeed = mediatorDecaySpeed
+        self.mediatorDe0caySpeed = mediatorDecaySpeed
         self.potentialDecaySpeed = potentialDecaySpeed
         self.activationPotential = activationPotential
         self.synapseStrengthRange = synapseStrengthRange
-        self.neuronSynapseFormingAreaSize = neuron_synapse_forming_area_size
 
         self.cortex.zero_()
         self.synapses = self.initialize_synapses()
