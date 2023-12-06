@@ -66,15 +66,16 @@ initial_params = {
     "mediatorDoseFromTouch": 100
 }
 
-optimizer = SentitronGradientDescentMetaParameterOptimizer(
-    initial_params=initial_params,
-    learning_rate=0.1,
-    iterations=10,
-    cyclesToRun=100,
-    target=100*0.5
-)
-
+###Usage Example
+#optimizer = SentitronGradientDescentMetaParameterOptimizer(
+#    initial_params=initial_params,
+#    learning_rate=0.1,
+#    iterations=10,
+#    cyclesToRun=100,
+#    target=100*0.5
+#)
+#
 # Perform optimization
-optimized_params = optimizer.optimize()
-print ("Done!")
-print (optimized_params)
+#optimized_params = optimizer.optimize()
+#print ("Done!")
+#print (optimized_params)
