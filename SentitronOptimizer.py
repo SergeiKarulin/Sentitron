@@ -56,28 +56,26 @@ class SentitronGradientDescentMetaParameterOptimizer:
 
         return self.dynamicParams
 
-#Some Example To Try
-#initial_params = {
-#    "sizeOfCortexLayer": 210,
-#    "neuronSynapseFormingAreaSize": 25,
-#    "mediatorDecaySpeed": 0.05,
-#    "potentialDecaySpeed": 0.1,
-#    "activationPotential": 5,
-#    "synapseStrengthRange": 4,
-#    "mediatorDoseFromFire": 0.1,
-#    "mediatorDoseFromTouch": 100
-#}
-#
-###Usage Example
-#optimizer = SentitronGradientDescentMetaParameterOptimizer(
-#    initial_params=initial_params,
-#    learning_rate=0.1,
-#    iterations=10,
-#    cyclesToRun=100,
-#    target=100*0.5
-#)
-#
-# Perform optimization
-#optimized_params = optimizer.optimize()
-#print ("Done!")
-#print (optimized_params)
+#Example To Run Optimziation
+# initial_params = {
+#     "sizeOfCortexLayer": 50,
+#     "neuronSynapseFormingAreaSize": 7,
+#     "mediatorDecaySpeed": 0.2,
+#     "potentialDecaySpeed": 0.2,
+#     "activationPotential": 3,
+#     "synapseStrengthRange": 2,
+#     "mediatorDoseFromFire": 0.5,
+#     "mediatorDoseFromTouch": 10
+# }
+
+# optimizer = Optimizer(
+#     initial_params=initial_params,
+#     learning_rate=1,
+#     iterations=3,
+#     cyclesToRun=200,
+#     target=150
+# )
+
+# optimized_params = optimizer.optimize(0.1)
+# print ("Done!")
+# print (optimized_params)
